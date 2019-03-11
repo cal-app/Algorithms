@@ -1,0 +1,38 @@
+RED BLACK TREES
+
+---Overview---
+
+An extension of binary search trees with a bunch of extra rules. These rules ensure that the tree doesn't get too imbalanced.
+
+Rule 1: Each node is either red or black.
+Rule 2: Every node that doesn't have 2 children has at least 1 "null leaf node", to fill up the tree. All null leaf nodes are black.
+Rule 3: A red node's children are always black.
+Rule 4 (optional): The root node is black.
+Rule 5: Every path from a node to any of its descendent null nodes must contain the same number of black nodes.
+
+---Insertion---
+
+- Try to insert a node as a red node following BST ordering.
+
+Case 1: 1ST NODE 
+			- Change color to black following R4 if applied.
+
+Case 2: PARENT IS BLACK
+			- no work needed.
+
+Case 3: PARENT IS RED
+			- if both parent and parent's siblings are red, then they should be changed to black, and grandparents changed to red. If needed (i.e. grandparent is root), change it back to black.
+
+Case 4:	PARENT IS RED 2, and on different side than its child (i.e. it's a left node and child is a right node)
+			- if parent's sibling is black, need LEFT ROTATION
+			- Rotation: shift nodes around
+			- Leads to Case 5
+			
+Case 5: PARENT IS RED 2, and on same side as its child
+			- Right rotation. Move grandparent to its right child, parent to gp's spot, child to parent's spot
+			- Swap colour so node in gp's spot is black, and its children are red
+			
+
+All these methods ensure that a subtree doesn't grow much larger than the others. It's balanced. Wow.
+
+Like search and delete, it's O(log(n)) in the avg and worst cases. Faster than BSTs worst cast (O(n)) because BSTs can be unbalanced.

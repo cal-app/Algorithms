@@ -1,0 +1,191 @@
+--------------
+----GRAPHS----
+--------------
+
+A graph is a datastructure designed to show relationships between objects
+Also called networks.
+
+A tree is just a type of graph.
+
+Both nodes AND edges can contain info.
+
+[Person A]-------------[Person B]
+^The 2 nodes are connected by an edge that could mean: know each other, worked together, live in the same city...
+
+------------------
+--Directed graph--
+------------------
+
+Graphs can have a direction
+[Geneva]--->[NYC]--->[Tokyo]
+
+If you're doing a round trip, then you'd represent it as (modulo shitty formatting)
+		
+[Gen  ---> [NY  ---> [To
+ eva] <---   C] <---  kyo]
+ 
+ --------------------
+ --Undirected graph--
+ --------------------
+ 
+ Example: graph of people who've met each other.
+ 
+ ----------
+ --Cycles--
+ ----------
+ 
+ Unlike trees, graphs can have cycles.
+ Cycle: you start at a node and can follow edges back to that node
+ Danger: infinite loops!
+ 
+ Often we want our graphs to be acyclic
+ 
+ ----------------
+ --Connectivity--
+ ----------------
+ 
+Disconnected graph: has (at least) a node that can't be reached by other nodes.
+Connected graph: there is a path between one vertex and every other vertex
+
+Weakly connected graph: A directed graph that becomes connected once you turn it into an undirected graph
+
+	[A]---->[B]---->[C]		You cannot reach A starting from B or C, or B starting from C	
+	[A]-----[B]-----[C]		Problem solved: graph is now connected
+	
+Strongly connected graph: Every node has a path from every node and to every other node
+	e.g. [A] to [B] AND [B] to [A]
+
+ 
+Connectivity: Measures the "strength" of the graph
+Connectivity is the min amount of nodes you have to remove for your graph to become disconnected.
+ 
+   [A]----[D]
+	\     /\
+	 \   /  \				Connectivity is 2: remove [B] then [D]
+	  \ /    \
+      [B]----[C]
+ 
+
+-------------------------
+--Graph Representations--
+-------------------------
+
+You can create Vertex and Edge objects (classes)
+Vertex: has edges it's connected to
+Edge: has vertices it's connected to
+
+Other (better) ways:
+
+1. Edge list: a list of edges, where each edge is a list containing its endpoints
+
+[0]---[1]-----[3]	=	[[0,1], [1,2], [1,3], [2,3]]
+		\	 /
+		 \	/
+		  [2]
+		  
+2. Adjacency list: nodes have an ID number corresponding to an index in an array. 
+Element [n] of the array is a list of all indices that the nth node is connected to.
+
+[0]---[1]-----[3]	=	[[1], [0, 2, 3], [1,3], [1,3]]
+		\	 /
+		 \	/
+		  [2] 
+		  
+3. Adjacency Matrix: Same idea as 2., but each element of the array is a vector
+
+[0]---[1]-----[3]	=	[[0, 1, 0 ,0], 
+		\	 /			 [1, 0, 1, 1],
+		 \	/			 [0, 1, 0, 1],
+		  [2] 			 [0, 1, 1, 0]]
+ 
+ 
+ See Jupyter notebook for implementations
+ 
+-------------------
+--Graph Traversal--
+-------------------
+Traversal: go through every element
+Search: go through until you find the element you want
+Two broad ways: DFS and BFS
+
+Time complexity: O(2*|edges| + |vertices|) ~ O(|edges| + |vertices|)
+					because we visit every node, and go to/away from it
+
+1. DFS: 	- Same principles as DFS for trees, but there's no root
+			- You can begin with any node
+			
+			Implementation 1.
+			
+			1. Mark starting node as "seen"
+			2. Add it to a stack
+			3. Pick an edge and follow it to the next node
+			4. Mark that node as "seen"
+			5. Add it to the stack
+			6. If you end up on an node you've already seen, go back prev node and pick another edge
+			7. If you're out of edges, pop that node from stack and go back to one before it
+			8. Continue until you've popped the entire stack, or found the node you wanted
+			
+		[H]---[G]----[R]---[P]
+			   \     /				Start from G
+			    \   /				Add it to stack: {G}
+			     \ /				Move to R: {R, G}
+			     [A]				Move to A: {A, R, G}
+									Already seen G: move back to A
+									Out of edges, pop A: {R, G}
+									Move back to R
+									Move to P: {P, R, G}
+									Move back to R, pop P: {R, G}
+									Move back to G, pop R: {G}
+									Move to H, pop G: {H}
+									Pop H: {}
+							
+			Implementation 2: Recursion, see Jupyter notebook
+
+2. BFS:		- Also visit every edge and every node
+Time complexity: O(|edges| + |vertices|)
+
+			Implementation
+			
+			1. Mark starting node as "seen"
+			2. Follow an edge to another node, add it to queue, mark as seen
+			3. Move back to previous node and visit all adjacent nodes, do same as above
+			4. Once we're done, dequeue one of the nodes and use it as starting node
+			5. Rinse, repeat
+			(See Jupyter notebook)
+			
+-----------------
+--Notable Paths--
+-----------------
+
+1. Eulerian path:
+	- Travel every edge at least once
+
+2. Eulerian cycle: 
+	- Travel every edge ONLY once
+	- End up where you started
+	- Only possible if each node has an EVEN degree (# of edges connected to them)
+ 
+Finding Eulerian Cycles Algorithm:
+
+	[A]--[B]--[C]
+	 \	 /\   /
+	  \ /  \ /
+	  [E]  [D]
+	 
+	1. Start at at any node, say [A]
+	2. Follow edges until you return to it: [A]-[B]-[E]
+	3. If you didn't encounter every edge, start again from unseen edge connected to a node you visited:
+	   [B]-[C]-[D]
+	4. Continue until you've seen every edge once
+	5. Combine paths at their common nodes: [A]-[B]-[E] + [B]-[C]-[D] = [A]-[B]-[C]-[D]-[B]-[E]
+	6. Super efficient! O(edges)
+
+3. Hamiltonian path:
+	- Travel every node once
+
+4. Hamiltonian cycle:
+	- Start and end with same node
+ 
+ 
+ 
+ 
